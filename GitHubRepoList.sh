@@ -2,7 +2,9 @@
 #
 # Create a CSV report of all repositories 
 #
-# PreReq: GH_TOKEN set in env
+# PreReqs:
+#	github cli, jq, sort installed 
+# 	GH_TOKEN set in env
 #
 # TODO(kernelsam): Read token from lastpass
 #
@@ -22,6 +24,9 @@ help()
    echo
 }
 
+############################################################
+# read args                                                  
+############################################################
 while [ ! -z "$1" ]; do
   case "$1" in
      --help|-h)
@@ -45,8 +50,12 @@ shift
 done
 
 
+############################################################
+# main
+# list gh repos to file and sort                                                 
+############################################################
 echo "[INFO] gh repo list ${org} -L ${limit} --json name --jq '.[].name' > repolist"
 
 gh repo list ${org} -L ${limit} --json name --jq '.[].name' > repolist
 
-sort repolist
+sort -o repolist{,}
