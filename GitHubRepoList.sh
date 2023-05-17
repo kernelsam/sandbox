@@ -54,8 +54,9 @@ done
 # main
 # list gh repos to file and sort                                                 
 ############################################################
-echo "[INFO] gh repo list ${org} -L ${limit} --json name --jq '.[].name' > repolist"
+echo "Repo Name, Description, Last Updated" > repolist.csv
+echo "[INFO] gh repo list ${org} -L ${limit} --json name,description,updatedAt --jq '.[]| [.name, .description, .updatedAt]' | tr -d '[]\"' >> repolist.csv"
 
-gh repo list ${org} -L ${limit} --json name --jq '.[].name' > repolist
+gh repo list ${org} -L ${limit} --json name,description,updatedAt --jq '.[]| [.name, .description, .updatedAt]' | tr -d '[]"' >> repolist.csv
 
-sort -o repolist{,}
+sort -k 1 -o repolist.csv{,}
