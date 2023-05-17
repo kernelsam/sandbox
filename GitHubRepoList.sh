@@ -45,7 +45,7 @@ shift
 done
 
 
-echo "[INFO] gh repo list ${org} -L ${limit} --json name --jq '.[].name' > repolist.csv"
+echo "[INFO] gh repo list ${org} -L ${limit} --json name --jq '.[].name' > repolist"
 
 gh repo list ${org} -L ${limit} --json name --jq '.[].name' > repolist
 
