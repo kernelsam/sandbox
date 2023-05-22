@@ -1,0 +1,15 @@
+name: 'shellcheck'
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '**.sh'
+    branches:
+      - "main"
+
+jobs:
+  shared:
+    uses: kernelsam/shared-workflows/.github/workflows/shellcheck.yml@main
+    with:
+      enable-shellcheck: true
