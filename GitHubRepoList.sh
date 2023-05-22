@@ -56,7 +56,7 @@ done
 ############################################################
 echo "[INFO] gh repo list ${org} -L ${limit} --json name,description,updatedAt --jq '.[]| [.name, .description, .updatedAt]' | tr -d '[]' > repolist.csv"
 
-gh repo list ${org} -L ${limit} --json name,description,updatedAt --jq '.[]| [.name, .description, .updatedAt]' | tr -d '[]' > repolist.csv
+gh repo list "${org}" -L "${limit}" --json name,description,updatedAt --jq '.[]| [.name, .description, .updatedAt]' | tr -d '[]' > repolist.csv
 
 sort -k 1 -o repolist.csv{,}
 echo -e "Repo Name, Description, Last Updated\n$(cat repolist.csv)" > repolist.csv
