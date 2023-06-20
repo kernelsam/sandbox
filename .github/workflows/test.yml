@@ -4,14 +4,16 @@ name: 'test vars'
 
 on: [push]
 
+env:
+  TEST1: "test1"
+  TEST2: "test2"
+
 jobs:
   run-env-test:
     runs-on: ubuntu-latest
     steps:
       - name: Test env vars
         env:
-          TEST1: "test1"
-          TEST2: "test2"
           TEST3: ${{ env.TEST1 }}
         run: |
           echo "$TEST1"
