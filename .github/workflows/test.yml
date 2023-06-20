@@ -12,7 +12,7 @@ jobs:
         env:
           TEST1: "test1"
           TEST2: "test2"
-          TEST3: ${{ env.TEST1 env.TEST2}}
+          TEST3: ${{ env.TEST1 }}
         run: |
           echo "$TEST1"
           echo "$TEST2"
