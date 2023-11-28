@@ -32,7 +32,6 @@ jobs:
     steps:
       - name: test
         run: |
-          sudo systemctl status postgresql
           echo "[INFO] PGPASSWORD='a<b*cde?f_g1H' psql -h postgres -p 5432 -U postgres -d pgdatabase -c \\dn+"
           yum list installed | grep postgres
           PGPASSWORD='a<b*cde?f_g1H' psql -h postgres -p 5432 -U postgres -d pgdatabase -c \\dn+
