@@ -13,7 +13,7 @@ jobs:
       image: public.ecr.aws/x8k4e8f3/amazonlinux:latest
 
     services:
-      postgres:
+      postgres-container:
         # image: bitnami/postgresql:12.0.0-debian-9-r22
         image: postgres:12
         env:
