@@ -12,6 +12,5 @@ jobs:
     steps:
       - name: dep-list
         run: |
-          rpm -q glibc
-          rpm -q libstdc++
-          rpm -q libgcc
+          ldd --version
+
