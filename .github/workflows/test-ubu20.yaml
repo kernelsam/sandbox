@@ -1,0 +1,18 @@
+name: maven linux
+
+on:
+  push:
+    branches-ignore: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  list-deps:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: dep-list
+        run: |
+          rpm -q glibc
+          rpm -q libstdc++
+          rpm -q libgcc
