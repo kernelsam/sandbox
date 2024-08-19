@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 #
-# Create a CSV report of all repositories 
-#
+# Create a list of manually disabled workflows
 # PreReqs:
 #	github cli, jq, sort installed 
 # 	GH_TOKEN set in env or login via gh cli
@@ -16,7 +15,7 @@ help()
 {
    # Display Help
    echo
-   echo "Syntax: GitHubRepoList.sh [-h|t]"
+   echo "Syntax: GitHubIssueSearch.sh [-h|t]"
    echo "options:"
    echo "f     Fields to search. Comma separated list. Ex. \"name,description,updatedAt"\"
    echo "h     Print this Help."
@@ -64,22 +63,27 @@ fi
 # main
 # list gh repos to file and sort                                                 
 ############################################################
+./GitHubRepoList.sh -o "${org}" -l "${limit}" -f "name"
 
-# update fields to be passed to jq in the format
-# .<value1>,.<value2>,...,.<valuen>
-if grep -q "," <<< "${fields}"; then
-   jqfields=$(echo "${fields}" | awk -F "," '{ for(i=1; i<NF; i++) printf ".%s,", $i }')
-   jqfields=$jqfields$(echo ".${fields}" | awk -F, '{ print "."$NF }')
-else
-   # single field should have no trailing comma
-   jqfields=".${fields}"
-fi
+while IFS= read -r line; do
+  repo=$(echo "${line}" | tr -d '"')
 
-# list the repos to a file 
-echo "[INFO] gh repo list ${org} -L ${limit} --json ${fields} --jq .[]| [${jqfields}] | tr -d '[]' > repolist.csv"
-gh repo list "${org}" -L "${limit}" --json "${fields}" --jq " .[]| [${jqfields}]" | tr -d '[]' > repolist.csv
+  if [[ $repo == "name" ]]; then
+     continue
+  fi
 
-# sort the file in place and add a header 
-sort -k 1 -o repolist.csv{,}
-echo -e "${fields}\n$(cat repolist.csv)" > repolist.csv
+  workflows=$(gh api \
+    -H "Accept: application/vnd.github+json" \
+    -H "X-GitHub-Api-Version: 2022-11-28" \
+    /repos/"${org}"/"${repo}"/actions/workflows | jq '.workflows[] | select(.state == "disabled_manually") | .path')
+  
+  if [ -n "$workflows" ]; then
+    for workflow_path in $workflows
+    do
+      echo "${org}/${repo}/$(echo $workflow_path | tr -d \")"
+    done
+  fi
 
+done < repolist.csv
+
+rm repolist.csv
