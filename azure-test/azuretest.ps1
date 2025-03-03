@@ -6,12 +6,12 @@ Invoke-RestMethod -Uri https://aka.ms/downloadazcopy-v10-linux -OutFile azcopy_v
 tar -xvzf azcopy_v10.tar.gz --strip-components=1
 ls -tlc
 ./azcopy --version
-$Env:AZCOPY_AUTO_LOGIN_TYPE = \"MSI\"
+$Env:AZCOPY_AUTO_LOGIN_TYPE = "MSI"
 $Env:AZCOPY_MSI_CLIENT_ID = ${Env:CLIENTID}
 ./azcopy login --identity --identity-client-id ${Env:CLIENTID}
 
-echo \"[INFO] ./azcopy list https://${Env:STORAGEACCOUNT}.blob.core.windows.net/senzing\"
-./azcopy list \"https://${Env:STORAGEACCOUNT}.blob.core.windows.net/senzing\"
+echo "[INFO] ./azcopy list https://${Env:STORAGEACCOUNT}.blob.core.windows.net/senzing"
+./azcopy list "https://${Env:STORAGEACCOUNT}.blob.core.windows.net/senzing"
 
 ${Env:SENZING_VERSION} = '3.12.5-25031'
 
@@ -41,14 +41,14 @@ else {
   exit 1
 }
           
-echo \"[INFO] architecture is: ${Env:ARCHITECTURE}\"
-echo \"[INFO] rpm platform path is: ${Env:RPM_PLATFORM_PATH}\"
-echo \"[INFO] deb platform path is: ${Env:DEB_PLATFORM_PATH}\"
+echo "[INFO] architecture is: ${Env:ARCHITECTURE}"
+echo "[INFO] rpm platform path is: ${Env:RPM_PLATFORM_PATH}"
+echo "[INFO] deb platform path is: ${Env:DEB_PLATFORM_PATH}"
 
-${Env:RPM_PATH} = \"https://senzing-production-yum.s3.amazonaws.com/${Env:RPM_PLATFORM_PATH}/${Env:RPM_ARCHITECTURE}/\"
-${Env:DEB_PATH} = \"https://senzing-production-apt.s3.amazonaws.com/${Env:DEB_PLATFORM_PATH}/s/se/\"
+${Env:RPM_PATH} = "https://senzing-production-yum.s3.amazonaws.com/${Env:RPM_PLATFORM_PATH}/${Env:RPM_ARCHITECTURE}"
+${Env:DEB_PATH} = "https://senzing-production-apt.s3.amazonaws.com/${Env:DEB_PLATFORM_PATH}/s/se/"
 
-echo \"[INFO] ./azcopy copy ${Env:RPM_PATH}senzingapi-${Env:SENZING_VERSION}.${Env:RPM_ARCHITECTURE}.rpm https://${Env:STORAGEACCOUNT}.blob.core.windows.net/senzing/senzingapi-${Env:SENZING_VERSION}.${Env:RPM_ARCHITECTURE}.rpm\"
-./azcopy copy \"${Env:RPM_PATH}senzingapi-${Env:SENZING_VERSION}.${Env:RPM_ARCHITECTURE}.rpm\" \"https://${Env:STORAGEACCOUNT}.blob.core.windows.net/senzing/senzingapi-${Env:SENZING_VERSION}.${Env:RPM_ARCHITECTURE}.rpm\"
+echo "[INFO] ./azcopy copy ${Env:RPM_PATH}/senzingapi-${Env:SENZING_VERSION}.${Env:RPM_ARCHITECTURE}.rpm https://${Env:STORAGEACCOUNT}.blob.core.windows.net/senzing/senzingapi-${Env:SENZING_VERSION}.${Env:RPM_ARCHITECTURE}.rpm"
+./azcopy copy "${Env:RPM_PATH}/senzingapi-${Env:SENZING_VERSION}.${Env:RPM_ARCHITECTURE}.rpm" "https://${Env:STORAGEACCOUNT}.blob.core.windows.net/senzing/senzingapi-${Env:SENZING_VERSION}.${Env:RPM_ARCHITECTURE}.rpm"
 
 cat /root/.azcopy/*.log
