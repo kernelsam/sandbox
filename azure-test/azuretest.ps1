@@ -75,22 +75,22 @@ $StorageAccount = Get-AzStorageAccount -ResourceGroupName ${Env:RESOURCEGROUP} -
 mkdir rpm
 cd rpm
 packages=$(aws s3 ls ${Env:RPM_PATH} --no-sign-request | awk '{print $NF}' | grep "${Env:SENZING_VERSION}" | grep '.rpm')
-for package in ${packages}; do
+for ( package in ${packages} ) {
   echo "[INFO] download: $package"
   aws s3 cp --exclude="*" --include="$package" "${Env:RPM_PATH}" . --no-sign-request
   Set-AzStorageFileContent -ShareName 'senzing' -Source "$package" -Path "${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}" -Context $storageAccount.Context
-done
+}
 cd -
 rm -rf rpm
 
 mkdir deb
 cd deb
 packages=$(aws s3 ls ${Env:DEB_PATH} --no-sign-request | awk '{print $NF}' | grep "${Env:SENZING_VERSION}" | grep '.deb')
-for package in ${packages}; do
+for ( package in ${packages} ) {
   echo "[INFO] download: $package"
   aws s3 cp --exclude="*" --include="$package" "${Env:DEB_PATH}" . --no-sign-request
   Set-AzStorageFileContent -ShareName 'senzing' -Source "$package" -Path "${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}" -Context $storageAccount.Context
-done
+}
 cd -
 rm -rf deb
 
