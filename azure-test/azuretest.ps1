@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 #Invoke-RestMethod -Uri 'https://raw.githubusercontent.com/Azure/azure-docs-json-samples/master/mslearn-arm-deploymentscripts-sample/appsettings.json' -OutFile 'appsettings.json'
 #$storageAccount = Get-AzStorageAccount -ResourceGroupName ${Env:RESOURCEGROUP} -Name ${Env:STORAGEACCOUNT}
 #$blob = Set-AzStorageBlobContent -File 'appsettings.json' -Container 'senzing' -Blob 'appsettings.json' -Context $StorageAccount.Context
@@ -14,6 +16,8 @@
 #./azcopy list "https://${Env:STORAGEACCOUNT}.blob.core.windows.net/senzing"
 
 cat /etc/os-release
+apt update
+apt install -y wget
 
 ${Env:SENZING_VERSION} = '3.12.5-25031'
 
