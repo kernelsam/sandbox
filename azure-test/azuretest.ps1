@@ -2,6 +2,9 @@ Invoke-RestMethod -Uri 'https://raw.githubusercontent.com/Azure/azure-docs-json-
 $storageAccount = Get-AzStorageAccount -ResourceGroupName ${Env:RESOURCEGROUP} -Name ${Env:STORAGEACCOUNT}
 $blob = Set-AzStorageBlobContent -File 'appsettings.json' -Container 'senzing' -Blob 'appsettings.json' -Context $StorageAccount.Context
 
+echo "[INFO] get deny assignments"
+Get-AzDenyAssignment
+
 Invoke-RestMethod -Uri https://aka.ms/downloadazcopy-v10-linux -OutFile azcopy_v10.tar.gz
 tar -xvzf azcopy_v10.tar.gz --strip-components=1
 ls -tlc
