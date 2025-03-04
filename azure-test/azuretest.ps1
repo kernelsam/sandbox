@@ -6,9 +6,9 @@ Invoke-RestMethod -Uri https://aka.ms/downloadazcopy-v10-linux -OutFile azcopy_v
 tar -xvzf azcopy_v10.tar.gz --strip-components=1
 ls -tlc
 ./azcopy --version
-$Env:AZCOPY_AUTO_LOGIN_TYPE = "MSI"
-$Env:AZCOPY_MSI_CLIENT_ID = ${Env:CLIENTID}
-./azcopy login --identity --identity-client-id ${Env:CLIENTID}
+#$Env:AZCOPY_AUTO_LOGIN_TYPE = "MSI"
+#$Env:AZCOPY_MSI_CLIENT_ID = ${Env:CLIENTID}
+#./azcopy login --identity --identity-client-id ${Env:CLIENTID}
 
 echo "[INFO] ./azcopy list https://${Env:STORAGEACCOUNT}.blob.core.windows.net/senzing"
 ./azcopy list "https://${Env:STORAGEACCOUNT}.blob.core.windows.net/senzing"
