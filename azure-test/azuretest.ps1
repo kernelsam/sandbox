@@ -63,7 +63,7 @@ if ( ${Env:SENZING_VERSION} -eq 'latest' ) {
 else {
   aws s3 ls "${Env:RPM_PATH}" --no-sign-request | awk '{print $NF}' | grep "${Env:SENZING_VERSION}"
   exit_status=$?
-  if [ $exit_status -ne 0 ]; then
+  if ( $exit_status -ne 0 ); then
     echo "[ERROR] Failed to find Senzing version: ${Env:SENZING_VERSION}."
     echo "[ERROR] Please refer to https://senzing.com/releases/ for supported versions."
     exit $exit_status
