@@ -58,7 +58,7 @@ ${Env:DEB_PATH} = "s3://senzing-production-apt/${Env:DEB_PLATFORM_PATH}/s/se/"
 
 if ( ${Env:SENZING_VERSION} -eq 'latest' ) {
   aws s3 ls "${Env:RPM_PATH}" --no-sign-request | grep "runtime" | awk '{print $NF}' >> packages
-  ${Env:SENZING_VERSION}$(cat packages | sort -r | head -n 1 | cut -d "-" -f 3)
+  ${Env:SENZING_VERSION}=$(cat packages | sort -r | head -n 1 | cut -d "-" -f 3)
 }
 else {
   aws s3 ls "${Env:RPM_PATH}" --no-sign-request | awk '{print $NF}' | grep "${Env:SENZING_VERSION}"
