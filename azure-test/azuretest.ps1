@@ -53,6 +53,7 @@ $StorageAccount = Get-AzStorageAccount -ResourceGroupName ${Env:RESOURCEGROUP} -
 $wc = New-Object Net.WebClient
 echo "[INFO] download file"
 $wc.DownloadFile("${Env:RPM_PATH}/senzingapi-${Env:SENZING_VERSION}.${Env:RPM_ARCHITECTURE}.rpm", "senzingapi-${Env:SENZING_VERSION}.${Env:RPM_ARCHITECTURE}.rpm")
+ls -tlc
 echo "[INFO] upload file"
 Set-AzStorageBlobContent -File "senzingapi-${Env:SENZING_VERSION}.${Env:RPM_ARCHITECTURE}.rpm" -Container 'senzing' -Blob "senzingapi-${Env:SENZING_VERSION}.${Env:RPM_ARCHITECTURE}.rpm" -Context $StorageAccount.Context
 rm "senzingapi-${Env:SENZING_VERSION}.${Env:RPM_ARCHITECTURE}.rpm"
