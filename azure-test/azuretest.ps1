@@ -48,6 +48,8 @@ echo "[INFO] deb platform path is: ${Env:DEB_PLATFORM_PATH}"
 ${Env:RPM_PATH} = "https://senzing-production-yum.s3.amazonaws.com/${Env:RPM_PLATFORM_PATH}/${Env:RPM_ARCHITECTURE}"
 ${Env:DEB_PATH} = "https://senzing-production-apt.s3.amazonaws.com/${Env:DEB_PLATFORM_PATH}/s/se/"
 
+$storageAccount = Get-AzStorageAccount -ResourceGroupName ${Env:RESOURCEGROUP} -Name ${Env:STORAGEACCOUNT}
+
 $wc = New-Object Net.WebClient
 echo "[INFO] download file"
 $wc.DownloadFile("${Env:RPM_PATH}/senzingapi-${Env:SENZING_VERSION}.${Env:RPM_ARCHITECTURE}.rpm", "senzingapi-${Env:SENZING_VERSION}.${Env:RPM_ARCHITECTURE}.rpm")
