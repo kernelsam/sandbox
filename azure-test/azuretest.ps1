@@ -19,8 +19,8 @@ cat /etc/os-release
 apt update
 apt install -y unzip
 
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-unzip awscliv2.zip
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" --fail --silent --show-error
+unzip -q awscliv2.zip
 ./aws/install
 
 if ( ${Env:ARCHITECTURE} -eq 'x86' ) {
@@ -59,6 +59,7 @@ ${Env:DEB_PATH} = "s3://senzing-production-apt/${Env:DEB_PLATFORM_PATH}/s/se/"
 if ( ${Env:SENZING_VERSION} -eq 'latest' ) {
   aws s3 ls "${Env:RPM_PATH}" --no-sign-request | grep "runtime" | awk '{print $NF}' >> packages
   ${Env:SENZING_VERSION}=$(cat packages | sort -r | head -n 1 | cut -d "-" -f 3)
+  rm packages
 }
 else {
   aws s3 ls "${Env:RPM_PATH}" --no-sign-request | awk '{print $NF}' | grep "${Env:SENZING_VERSION}"
@@ -69,12 +70,13 @@ else {
     exit $exit_status
   }
 }
+echo "[INFO] Senzing version is: ${Env:SENZING_VERSION}"
 
 $StorageAccount = Get-AzStorageAccount -ResourceGroupName ${Env:RESOURCEGROUP} -Name ${Env:STORAGEACCOUNT}
 
 mkdir rpm
 cd rpm
-packages=$(aws s3 ls ${Env:RPM_PATH} --no-sign-request | awk '{print $NF}' | grep "${Env:SENZING_VERSION}" | grep '.rpm')
+$packages = aws s3 ls ${Env:RPM_PATH} --no-sign-request | awk '{print $NF}' | grep "${Env:SENZING_VERSION}" | grep '.rpm'
 for ( package in ${packages} ) {
   echo "[INFO] download: $package"
   aws s3 cp --exclude="*" --include="$package" "${Env:RPM_PATH}" . --no-sign-request
@@ -85,7 +87,7 @@ rm -rf rpm
 
 mkdir deb
 cd deb
-packages=$(aws s3 ls ${Env:DEB_PATH} --no-sign-request | awk '{print $NF}' | grep "${Env:SENZING_VERSION}" | grep '.deb')
+$packages= aws s3 ls ${Env:DEB_PATH} --no-sign-request | awk '{print $NF}' | grep "${Env:SENZING_VERSION}" | grep '.deb'
 for ( package in ${packages} ) {
   echo "[INFO] download: $package"
   aws s3 cp --exclude="*" --include="$package" "${Env:DEB_PATH}" . --no-sign-request
