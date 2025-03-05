@@ -19,8 +19,11 @@ cat /etc/os-release
 apt update
 apt install -y unzip
 
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" --fail --silent --show-error
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+ls -tlc
+echo "[INFO] unzip awscli"
 unzip -q awscliv2.zip
+echo "[INFO] install awscli"
 ./aws/install
 
 if ( ${Env:ARCHITECTURE} -eq 'x86' ) {
@@ -40,7 +43,7 @@ if ( ${Env:OPENSSLVERSION} -eq '3' ) {
   ${Env:DEB_PLATFORM_PATH} = 'ubuntu/pool/noble'
   ${Env:RPM_PLATFORM_PATH} = 'amazonlinux/2023'
 } 
-elseif (${Env:OPENSSLVERSION} -eq '1') {
+elseif ( ${Env:OPENSSLVERSION} -eq '1' ) {
   ${Env:DEB_PLATFORM_PATH} = 'debian/pool/bullseye'
   ${Env:RPM_PLATFORM_PATH} = 'amazonlinux/2'
 }
