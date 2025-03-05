@@ -57,11 +57,13 @@ ${Env:RPM_PATH} = "s3://senzing-production-yum/${Env:RPM_PLATFORM_PATH}/${Env:RP
 ${Env:DEB_PATH} = "s3://senzing-production-apt/${Env:DEB_PLATFORM_PATH}/s/se/"
 
 if ( ${Env:SENZING_VERSION} -eq 'latest' ) {
+  echo "[INFO] Find latest senzing version"
   aws s3 ls "${Env:RPM_PATH}" --no-sign-request | grep "runtime" | awk '{print $NF}' >> packages
-  ${Env:SENZING_VERSION}=$(cat packages | sort -r | head -n 1 | cut -d "-" -f 3)
+  ${Env:SENZING_VERSION}= cat packages | sort -r | head -n 1 | cut -d "-" -f 3
   rm packages
 }
 else {
+  "[INFO] Verify supplied senzing version exists"
   aws s3 ls "${Env:RPM_PATH}" --no-sign-request | awk '{print $NF}' | grep "${Env:SENZING_VERSION}"
   exit_status=$?
   if ( $exit_status -ne 0 ) {
