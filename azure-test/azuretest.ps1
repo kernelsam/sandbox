@@ -22,7 +22,7 @@ apt install -y unzip
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 ls -tlc
 echo "[INFO] unzip awscli"
-unzip -q awscliv2.zip
+unzip awscliv2.zip
 echo "[INFO] install awscli"
 ./aws/install
 
@@ -61,7 +61,10 @@ ${Env:DEB_PATH} = "s3://senzing-production-apt/${Env:DEB_PLATFORM_PATH}/s/se/"
 
 if ( ${Env:SENZING_VERSION} -eq 'latest' ) {
   echo "[INFO] Find latest senzing version"
+  echo "[INFO aws s3 ls ${Env:RPM_PATH} --no-sign-request | grep "runtime" | awk '{print $NF}'"
+  aws s3 ls "${Env:RPM_PATH}" --no-sign-request | grep "runtime" | awk '{print $NF}'
   aws s3 ls "${Env:RPM_PATH}" --no-sign-request | grep "runtime" | awk '{print $NF}' >> packages
+  cat packages
   ${Env:SENZING_VERSION}= cat packages | sort -r | head -n 1 | cut -d "-" -f 3
   rm packages
 }
