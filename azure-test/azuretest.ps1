@@ -62,16 +62,16 @@ ${Env:DEB_PATH} = "s3://senzing-production-apt/${Env:DEB_PLATFORM_PATH}/s/se/"
 
 if ( ${Env:SENZING_VERSION} -eq 'latest' ) {
   echo "[INFO] Find latest senzing version"
-  echo "[INFO aws s3 ls ${Env:RPM_PATH} --no-sign-request | grep "runtime" | awk '{print $NF}'"
-  aws s3 ls "${Env:RPM_PATH}" --no-sign-request | grep "runtime" | awk '{print $NF}'
-  aws s3 ls "${Env:RPM_PATH}" --no-sign-request | grep "runtime" | awk '{print $NF}' >> packages
+  echo "[INFO aws s3 ls ${Env:RPM_PATH} --no-sign-request"
+  aws s3 ls "${Env:RPM_PATH}/" --no-sign-request
+  aws s3 ls "${Env:RPM_PATH}/" --no-sign-request | grep "runtime" | awk '{print $NF}' >> packages
   cat packages
   ${Env:SENZING_VERSION}= cat packages | sort -r | head -n 1 | cut -d "-" -f 3
   rm packages
 }
 else {
   "[INFO] Verify supplied senzing version exists"
-  aws s3 ls "${Env:RPM_PATH}" --no-sign-request | awk '{print $NF}' | grep "${Env:SENZING_VERSION}"
+  aws s3 ls "${Env:RPM_PATH}/" --no-sign-request | awk '{print $NF}' | grep "${Env:SENZING_VERSION}"
   exit_status=$?
   if ( $exit_status -ne 0 ) {
     echo "[ERROR] Failed to find Senzing version: ${Env:SENZING_VERSION}."
@@ -85,10 +85,11 @@ $StorageAccount = Get-AzStorageAccount -ResourceGroupName ${Env:RESOURCEGROUP} -
 
 mkdir rpm
 cd rpm
-$packages = aws s3 ls ${Env:RPM_PATH} --no-sign-request | awk '{print $NF}' | grep "${Env:SENZING_VERSION}" | grep '.rpm'
+$packages = aws s3 ls ${Env:RPM_PATH}/ --no-sign-request | awk '{print $NF}' | grep "${Env:SENZING_VERSION}" | grep '.rpm'
 for ( package in ${packages} ) {
   echo "[INFO] download: $package"
-  aws s3 cp --exclude="*" --include="$package" "${Env:RPM_PATH}" . --no-sign-request
+  echo "[INFO] aws s3 sync --exclude=* --include=$package ${Env:RPM_PATH} . --no-sign-request"
+  aws s3 sync --exclude="*" --include="$package" "${Env:RPM_PATH}" . --no-sign-request
   Set-AzStorageFileContent -ShareName 'senzing' -Source "$package" -Path "${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}" -Context $storageAccount.Context
 }
 cd -
@@ -99,7 +100,7 @@ cd deb
 $packages= aws s3 ls ${Env:DEB_PATH} --no-sign-request | awk '{print $NF}' | grep "${Env:SENZING_VERSION}" | grep '.deb'
 for ( package in ${packages} ) {
   echo "[INFO] download: $package"
-  aws s3 cp --exclude="*" --include="$package" "${Env:DEB_PATH}" . --no-sign-request
+  aws s3 sync --exclude="*" --include="$package" "${Env:DEB_PATH}" . --no-sign-request
   Set-AzStorageFileContent -ShareName 'senzing' -Source "$package" -Path "${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}" -Context $storageAccount.Context
 }
 cd -
