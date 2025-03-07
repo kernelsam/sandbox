@@ -1,0 +1,56 @@
+name: Go test linux - mssql
+
+on: [push]
+
+env:
+  SENZING_LOG_LEVEL: TRACE
+  SENZING_TOOLS_DATABASE_URL: "mssql://sa:Passw0rd@mssql:1433/G2/?TrustServerCertificate=true&driver=mssqldriver"
+  UBUNTU_VERSION: "24.04"
+
+permissions:
+  contents: read
+
+jobs:
+  go-test-linux:
+    name: "Go test with Senzing: ${{ matrix.senzingsdk-version }}; OS: ${{ matrix.os }}; Go: ${{ matrix.go }} - mssql"
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        go: ["1.21"]
+        os: [ubuntu-latest]
+        senzingsdk-version: [staging-v4]
+
+    services:
+      mssql:
+        # https://mcr.microsoft.com/en-us/artifact/mar/mssql/server
+        env:
+          ACCEPT_EULA: Y
+          MSSQL_PID: Express
+          MSSQL_SA_PASSWORD: Passw0rd
+        image: mcr.microsoft.com/mssql/server
+        ports:
+          - 1433:1433
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install dependencies
+        run: |
+          curl -sSL -O https://packages.microsoft.com/config/ubuntu/$(grep VERSION_ID /etc/os-release | cut -d '"' -f 2)/packages-microsoft-prod.deb
+          sudo dpkg -i packages-microsoft-prod.deb
+          rm packages-microsoft-prod.deb
+          sudo apt-get update
+          sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18
+          sudo ACCEPT_EULA=Y apt-get install -y mssql-tools18
+          echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bashrc
+          source ~/.bashrc
+          sudo apt-get install -y unixodbc-dev
+          sudo apt-get install -y libgssapi-krb5-2
+
+      - name: Create database
+        run: |
+          /opt/mssql-tools18/bin/sqlcmd -P "Passw0rd" -Q "CREATE DATABASE G2" -S localhost,1433 -U sa -C
+          /opt/mssql-tools18/bin/sqlcmd -P "Passw0rd" -Q "sp_databases" -S localhost,1433 -U sa -C
