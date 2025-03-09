@@ -140,7 +140,7 @@ cd $localFolder
 #  echo "[INFO] aws s3 sync --exclude=* --include=$package ${Env:RPM_PATH} . --no-sign-request"
 #  aws s3 sync --exclude="*" --include="$package" "${Env:RPM_PATH}" . --no-sign-request
   $CurrentFolder = (Get-Item .).FullName
-  $Container = Get-AzStorageShare -Name ${Env:STORAGEACCOUNT} -Context $StorageAccount.Context
+  $Container = Get-AzStorageShare -Name 'senzing' -Context $StorageAccount.Context
   Get-ChildItem -Recurse | Where-Object { $_.GetType().Name -eq "FileInfo"} | ForEach-Object {
     $path=$_.FullName.Substring($Currentfolder.Length+1).Replace("\","/")
     Write-Host "[INFO] Set-AzStorageFileContent -ShareClient $Container -Source $_.FullName -Path $path -Force -Context $StorageAccount.Context"
