@@ -4,15 +4,15 @@
 #$storageAccount = Get-AzStorageAccount -ResourceGroupName ${Env:RESOURCEGROUP} -Name ${Env:STORAGEACCOUNT}
 #$blob = Set-AzStorageBlobContent -File 'appsettings.json' -Container 'senzing' -Blob 'appsettings.json' -Context $StorageAccount.Context
 
-Invoke-RestMethod -Uri https://aka.ms/downloadazcopy-v10-linux -OutFile azcopy_v10.tar.gz
-tar -xvzf azcopy_v10.tar.gz --strip-components=1
-./azcopy --version
-$Env:AZCOPY_AUTO_LOGIN_TYPE = "MSI"
-$Env:AZCOPY_MSI_CLIENT_ID = ${Env:CLIENTID}
-./azcopy login --identity #--identity-client-id ${Env:CLIENTID}
+#Invoke-RestMethod -Uri https://aka.ms/downloadazcopy-v10-linux -OutFile azcopy_v10.tar.gz
+#tar -xvzf azcopy_v10.tar.gz --strip-components=1
+#./azcopy --version
+#$Env:AZCOPY_AUTO_LOGIN_TYPE = "MSI"
+#$Env:AZCOPY_MSI_CLIENT_ID = ${Env:CLIENTID}
+#./azcopy login --identity #--identity-client-id ${Env:CLIENTID}
 
-echo "[INFO] ./azcopy list https://senzing.blob.core.windows.net/senzing/${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}"
-./azcopy list "https://senzing.blob.core.windows.net/senzing/${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}"
+#echo "[INFO] ./azcopy list https://senzing.blob.core.windows.net/senzing/${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}"
+#./azcopy list "https://senzing.blob.core.windows.net/senzing/${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}"
 
 cat /etc/os-release
 #apt update
@@ -80,11 +80,61 @@ echo "[INFO] deb platform path is: ${Env:DEB_PLATFORM_PATH}"
 #}
 #echo "[INFO] Senzing version is: ${Env:SENZING_VERSION}"
 
+
+$containerUrl = "https://senzing.blob.core.windows.net/senzing" 
+
+# Extract the container name from the URL
+$containerName = ($containerUrl -split "/")[-1]
+
+# Create a local folder
+$localFolder = ".\$containerName"
+if (-Not (Test-Path -Path $localFolder)) {
+    New-Item -ItemType Directory -Path $localFolder
+}
+
+$restApiUrl = "$($containerUrl)?restype=container&comp=list"
+Write-Host "REST API URL: $restApiUrl"
+
+try {
+    # Retrieve information of all files under the container
+    Invoke-RestMethod -Uri $restApiUrl -OutFile .\$containerName.xml
+    [xml]$xmlContent = Get-Content -Path .\$containerName.xml
+}
+catch {
+    Write-Error "Failed to fetch container information. Error: $_"
+    exit 1
+}
+
+foreach ($blob in $xmlContent.EnumerationResults.Blobs.Blob) {
+    $blobUrl = $blob.Url
+    $blobName = $blob.Name
+
+    Write-Host "Processing Blob: $blobName"
+
+    $localFilePath = Join-Path $localFolder $blobName
+
+    $localFileDir = Split-Path $localFilePath -Parent
+    if (-Not (Test-Path -Path $localFileDir)) {
+        New-Item -ItemType Directory -Path $localFileDir
+    }
+
+    try {
+        Invoke-WebRequest -Uri $blobUrl -OutFile $localFilePath
+        Write-Host "Downloaded: $blobUrl to $localFilePath"
+    }
+    catch {
+        Write-Error "Failed to download $blobUrl. Error: $_"
+    }
+}
+
+Write-Host "All files have been downloaded to the $localFolder folder."
+
+
+
 $StorageAccount = Get-AzStorageAccount -ResourceGroupName ${Env:RESOURCEGROUP} -Name ${Env:STORAGEACCOUNT}
 
-mkdir rpm
-./azcopy "https://senzing.blob.core.windows.net/senzing/${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}" rpm/ --recursive
-cd rpm
+#./azcopy "https://senzing.blob.core.windows.net/senzing/${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}" rpm/ --recursive
+cd $localFolder
 #$packages = aws s3 ls ${Env:RPM_PATH}/ --no-sign-request | awk '{print $NF}' | grep "${Env:SENZING_VERSION}" | grep '.rpm'
 #for ( package in ${packages} ) {
 #  echo "[INFO] download: $package"
@@ -98,8 +148,7 @@ cd rpm
   }
   #Set-AzStorageFileContent -ShareName 'senzing' -Source "$package" -Path "${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}" -Context $storageAccount.Context
 #}
-cd -
-rm -rf rpm
+
 
 #mkdir deb
 #cd deb
