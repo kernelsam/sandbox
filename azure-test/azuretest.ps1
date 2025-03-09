@@ -14,7 +14,6 @@
 #echo "[INFO] ./azcopy list https://senzing.blob.core.windows.net/senzing/${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}"
 #./azcopy list "https://senzing.blob.core.windows.net/senzing/${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}"
 
-cat /etc/os-release
 #apt update
 #apt install snapd
 #apt install -y unzip
@@ -35,7 +34,7 @@ elseif (${Env:ARCHITECTURE} -eq 'ARM') {
   ${Env:RPM_ARCHITECTURE} = 'aarch64'
 }
 else {
-  echo '[ERROR] unsupported architecture found.'
+  Write-Host '[ERROR] unsupported architecture found.'
   exit 1
 }
 
@@ -48,13 +47,13 @@ elseif ( ${Env:OPENSSLVERSION} -eq '1' ) {
   ${Env:RPM_PLATFORM_PATH} = 'amazonlinux/2'
 }
 else {
-  echo '[ERROR] unsupported openssl version found.'
+  Write-Host '[ERROR] unsupported openssl version found.'
   exit 1
 }
           
-echo "[INFO] architecture is: ${Env:ARCHITECTURE}"
-echo "[INFO] rpm platform path is: ${Env:RPM_PLATFORM_PATH}"
-echo "[INFO] deb platform path is: ${Env:DEB_PLATFORM_PATH}"
+Write-Host "[INFO] architecture is: ${Env:ARCHITECTURE}"
+Write-Host "[INFO] rpm platform path is: ${Env:RPM_PLATFORM_PATH}"
+Write-Host "[INFO] deb platform path is: ${Env:DEB_PLATFORM_PATH}"
 
 #${Env:RPM_PATH} = "s3://senzing-production-yum/${Env:RPM_PLATFORM_PATH}/${Env:RPM_ARCHITECTURE}"
 #${Env:DEB_PATH} = "s3://senzing-production-apt/${Env:DEB_PLATFORM_PATH}/s/se/"
@@ -93,7 +92,7 @@ if (-Not (Test-Path -Path $localFolder)) {
 }
 
 $restApiUrl = "$($containerUrl)?restype=container&comp=list"
-Write-Host "REST API URL: $restApiUrl"
+Write-Host "[INFO] REST API URL: $restApiUrl"
 
 try {
     # Retrieve information of all files under the container
@@ -101,7 +100,7 @@ try {
     [xml]$xmlContent = Get-Content -Path .\$containerName.xml
 }
 catch {
-    Write-Error "Failed to fetch container information. Error: $_"
+    Write-Error "[ERROR] Failed to fetch container information. Error: $_"
     exit 1
 }
 
@@ -109,7 +108,7 @@ foreach ($blob in $xmlContent.EnumerationResults.Blobs.Blob) {
     $blobUrl = $blob.Url
     $blobName = $blob.Name
 
-    Write-Host "Processing Blob: $blobName"
+    Write-Host "[INFO] Processing Blob: $blobName"
 
     $localFilePath = Join-Path $localFolder $blobName
 
@@ -120,14 +119,14 @@ foreach ($blob in $xmlContent.EnumerationResults.Blobs.Blob) {
 
     try {
         Invoke-WebRequest -Uri $blobUrl -OutFile $localFilePath
-        Write-Host "Downloaded: $blobUrl to $localFilePath"
+        Write-Host "[INFO] Downloaded: $blobUrl to $localFilePath"
     }
     catch {
-        Write-Error "Failed to download $blobUrl. Error: $_"
+        Write-Error "[ERROR] Failed to download $blobUrl. Error: $_"
     }
 }
 
-Write-Host "All files have been downloaded to the $localFolder folder."
+Write-Host "[INFO] All files have been downloaded to the $localFolder folder."
 
 
 
@@ -141,10 +140,11 @@ cd $localFolder
 #  echo "[INFO] aws s3 sync --exclude=* --include=$package ${Env:RPM_PATH} . --no-sign-request"
 #  aws s3 sync --exclude="*" --include="$package" "${Env:RPM_PATH}" . --no-sign-request
   $CurrentFolder = (Get-Item .).FullName
-  $Container = Get-AzStorageShare -Name ${Env:STORAGEACCOUNT} -Context $storageAccount.Context
+  $Container = Get-AzStorageShare -Name ${Env:STORAGEACCOUNT} -Context $StorageAccount.Context
   Get-ChildItem -Recurse | Where-Object { $_.GetType().Name -eq "FileInfo"} | ForEach-Object {
     $path=$_.FullName.Substring($Currentfolder.Length+1).Replace("\","/")
-    Set-AzStorageFileContent -ShareClient $Container -Source $_.FullName -Path $path -Force -Context $storageAccount.Context
+    Write-Host "[INFO] Set-AzStorageFileContent -ShareClient $Container -Source $_.FullName -Path $path -Force -Context $StorageAccount.Context"
+    Set-AzStorageFileContent -ShareClient $Container -Source $_.FullName -Path $path -Force -Context $StorageAccount.Context
   }
   #Set-AzStorageFileContent -ShareName 'senzing' -Source "$package" -Path "${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}" -Context $storageAccount.Context
 #}
