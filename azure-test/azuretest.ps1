@@ -84,13 +84,13 @@ echo "[INFO] deb platform path is: ${Env:DEB_PLATFORM_PATH}"
 $StorageAccount = Get-AzStorageAccount -ResourceGroupName ${Env:RESOURCEGROUP} -Name ${Env:STORAGEACCOUNT}
 
 mkdir rpm
+./azcopy "https://senzing.blob.core.windows.net/senzing/${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}" rpm/ --recursive
 cd rpm
 #$packages = aws s3 ls ${Env:RPM_PATH}/ --no-sign-request | awk '{print $NF}' | grep "${Env:SENZING_VERSION}" | grep '.rpm'
 #for ( package in ${packages} ) {
 #  echo "[INFO] download: $package"
 #  echo "[INFO] aws s3 sync --exclude=* --include=$package ${Env:RPM_PATH} . --no-sign-request"
 #  aws s3 sync --exclude="*" --include="$package" "${Env:RPM_PATH}" . --no-sign-request
-  ./azcopy "https://senzing.blob.core.windows.net/senzing/${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}" . --recursive
   $CurrentFolder = (Get-Item .).FullName
   $Container = Get-AzStorageShare -Name ${Env:STORAGEACCOUNT}
   Get-ChildItem -Recurse | Where-Object { $_.GetType().Name -eq "FileInfo"} | ForEach-Object {
