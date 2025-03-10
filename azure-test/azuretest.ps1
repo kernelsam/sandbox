@@ -133,13 +133,14 @@ Write-Host "[INFO] All files have been downloaded to the $localFolder folder."
 $StorageAccount = Get-AzStorageAccount -ResourceGroupName ${Env:RESOURCEGROUP} -Name ${Env:STORAGEACCOUNT}
 
 cd $localFolder
+ls -tlc
 Invoke-RestMethod -Uri https://aka.ms/downloadazcopy-v10-linux -OutFile azcopy_v10.tar.gz
 tar -xvzf azcopy_v10.tar.gz --strip-components=1
 ./azcopy --version
 $Env:AZCOPY_AUTO_LOGIN_TYPE = "MSI"
 $Env:AZCOPY_MSI_CLIENT_ID = ${Env:CLIENTID}
 ./azcopy login --identity #--identity-client-id ${Env:CLIENTID}
-./azcopy cp "$localFolder/${Env:ARCHITECTURE}" "https://${Env:STORAGEACCOUNT}.file.core.windows.net/senzing" --recursive
+./azcopy cp "${Env:ARCHITECTURE}" "https://${Env:STORAGEACCOUNT}.file.core.windows.net/senzing" --recursive
 # ./azcopy cp "https://senzing.blob.core.windows.net/senzing/${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}" $localFolder --recursive
 
 #$packages = aws s3 ls ${Env:RPM_PATH}/ --no-sign-request | awk '{print $NF}' | grep "${Env:SENZING_VERSION}" | grep '.rpm'
