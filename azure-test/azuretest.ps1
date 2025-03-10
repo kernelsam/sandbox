@@ -132,27 +132,38 @@ Write-Host "[INFO] All files have been downloaded to the $localFolder folder."
 
 $StorageAccount = Get-AzStorageAccount -ResourceGroupName ${Env:RESOURCEGROUP} -Name ${Env:STORAGEACCOUNT}
 
-#./azcopy "https://senzing.blob.core.windows.net/senzing/${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}" rpm/ --recursive
 cd $localFolder
+Invoke-RestMethod -Uri https://aka.ms/downloadazcopy-v10-linux -OutFile azcopy_v10.tar.gz
+tar -xvzf azcopy_v10.tar.gz --strip-components=1
+./azcopy --version
+$Env:AZCOPY_AUTO_LOGIN_TYPE = "MSI"
+$Env:AZCOPY_MSI_CLIENT_ID = ${Env:CLIENTID}
+./azcopy login --identity #--identity-client-id ${Env:CLIENTID}
+./azcopy cp "$localFolder/${Env:ARCHITECTURE}" "https://${Env:STORAGEACCOUNT}.blob.core.windows.net/senzing" --recursive
+# ./azcopy cp "https://senzing.blob.core.windows.net/senzing/${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}" $localFolder --recursive
+
 #$packages = aws s3 ls ${Env:RPM_PATH}/ --no-sign-request | awk '{print $NF}' | grep "${Env:SENZING_VERSION}" | grep '.rpm'
 #for ( package in ${packages} ) {
 #  echo "[INFO] download: $package"
 #  echo "[INFO] aws s3 sync --exclude=* --include=$package ${Env:RPM_PATH} . --no-sign-request"
 #  aws s3 sync --exclude="*" --include="$package" "${Env:RPM_PATH}" . --no-sign-request
-  $CurrentFolder = (Get-Item .).FullName
-  ls -tlc
-  pwd
-  ls -tlc x86/openssl3/
-  $Container = Get-AzStorageShare -Name 'senzing' -Context $StorageAccount.Context
-  echo "[INFO] New-AzStorageDirectory -ShareName senzing -Path ${Env:ARCHITECTURE} -Context $storageAccount.Context"
-  New-AzStorageDirectory -ShareName 'senzing' -Path "${Env:ARCHITECTURE}" -Context $storageAccount.Context
-  echo "[INFO] New-AzStorageDirectory -ShareName senzing -Path ${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION} -Context $storageAccount.Context"
-  New-AzStorageDirectory -ShareName 'senzing' -Path "${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}" -Context $storageAccount.Context
-  Get-ChildItem -Recurse | Where-Object { $_.GetType().Name -eq "FileInfo"} | ForEach-Object {
-    $path=$_.FullName.Substring($Currentfolder.Length+1).Replace("\","/")
-    Write-Host "[INFO] Set-AzStorageFileContent -ShareName 'senzing' -Source $_ -Path $path -Force -Context"
-    Set-AzStorageFileContent -ShareName 'senzing' -Source "$_" -Path "$path" -Force -Context $storageAccount.Context
-  }
+################################################################################################################################
+# working file share upload
+#  $CurrentFolder = (Get-Item .).FullName
+#  ls -tlc
+#  pwd
+#  ls -tlc x86/openssl3/
+#  $Container = Get-AzStorageShare -Name 'senzing' -Context $StorageAccount.Context
+#  echo "[INFO] New-AzStorageDirectory -ShareName senzing -Path ${Env:ARCHITECTURE} -Context $storageAccount.Context"
+#  New-AzStorageDirectory -ShareName 'senzing' -Path "${Env:ARCHITECTURE}" -Context $storageAccount.Context
+#  echo "[INFO] New-AzStorageDirectory -ShareName senzing -Path ${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION} -Context $storageAccount.Context"
+#  New-AzStorageDirectory -ShareName 'senzing' -Path "${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}" -Context $storageAccount.Context
+#  Get-ChildItem -Recurse | Where-Object { $_.GetType().Name -eq "FileInfo"} | ForEach-Object {
+#    $path=$_.FullName.Substring($Currentfolder.Length+1).Replace("\","/")
+#    Write-Host "[INFO] Set-AzStorageFileContent -ShareName 'senzing' -Source $_ -Path $path -Force -Context"
+#    Set-AzStorageFileContent -ShareName 'senzing' -Source "$_" -Path "$path" -Force -Context $storageAccount.Context
+#  }
+################################################################################################################################
   #Set-AzStorageFileContent -ShareName 'senzing' -Source "$package" -Path "${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}" -Context $storageAccount.Context
 #}
 
