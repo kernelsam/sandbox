@@ -146,10 +146,8 @@ cd $localFolder
   $Container = Get-AzStorageShare -Name 'senzing' -Context $StorageAccount.Context
   Get-ChildItem -Recurse | Where-Object { $_.GetType().Name -eq "FileInfo"} | ForEach-Object {
     $path=$_.FullName.Substring($Currentfolder.Length+1).Replace("\","/")
-    echo "[INFO] sources: $_"
-    echo "[INFO] Source: $_.Name"
-    Write-Host "[INFO] Set-AzStorageFileContent -ShareClient $Container -Source $_.Name -Path $path -Force -Context"
-    Set-AzStorageFileContent -ShareClient "$Container" -Source "$_.Name" -Path "$path" -Force -Context $StorageAccount.Context
+    Write-Host "[INFO] Set-AzStorageFileContent -ShareClient $Container -Source $_ -Path $path -Force -Context"
+    Set-AzStorageFileContent -ShareClient "$Container" -Source "$_" -Path "$path" -Force -Context $StorageAccount.Context
   }
   #Set-AzStorageFileContent -ShareName 'senzing' -Source "$package" -Path "${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}" -Context $storageAccount.Context
 #}
