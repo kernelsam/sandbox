@@ -131,6 +131,10 @@ Write-Host "[INFO] All files have been downloaded to the $localFolder folder."
 
 
 $StorageAccount = Get-AzStorageAccount -ResourceGroupName ${Env:RESOURCEGROUP} -Name ${Env:STORAGEACCOUNT}
+echo "[INFO] New-AzStorageDirectory -ShareName senzing -Path ${Env:ARCHITECTURE} -Context $storageAccount.Context"
+New-AzStorageDirectory -ShareName 'senzing' -Path "${Env:ARCHITECTURE}" -Context $storageAccount.Context
+echo "[INFO] New-AzStorageDirectory -ShareName senzing -Path ${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION} -Context $storageAccount.Context"
+New-AzStorageDirectory -ShareName 'senzing' -Path "${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}" -Context $storageAccount.Context
 
 cd $localFolder
 ls -tlc
@@ -139,7 +143,8 @@ tar -xvzf azcopy_v10.tar.gz --strip-components=1
 ./azcopy --version
 $Env:AZCOPY_AUTO_LOGIN_TYPE = "MSI"
 $Env:AZCOPY_MSI_CLIENT_ID = ${Env:CLIENTID}
-./azcopy login --identity #--identity-client-id ${Env:CLIENTID}
+./azcopy login --identity --identity-client-id ${Env:CLIENTID}
+echo "[INFO] ./azcopy cp ${Env:ARCHITECTURE} https://${Env:STORAGEACCOUNT}.file.core.windows.net/senzing --recursive"
 ./azcopy cp "${Env:ARCHITECTURE}" "https://${Env:STORAGEACCOUNT}.file.core.windows.net/senzing" --recursive
 # ./azcopy cp "https://senzing.blob.core.windows.net/senzing/${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}" $localFolder --recursive
 
