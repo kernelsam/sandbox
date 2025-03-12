@@ -151,7 +151,7 @@ cd $localFolder
 #$Env:AZCOPY_MSI_CLIENT_ID = ${Env:CLIENTID}
 #./azcopy login --identity --identity-client-id ${Env:CLIENTID}
 echo "[INFO] $azcopypath/azcopy cp ${Env:ARCHITECTURE} https://${Env:STORAGEACCOUNT}.file.core.windows.net/senzing --recursive"
-$azcopypath/azcopy cp "${Env:ARCHITECTURE}" "https://${Env:STORAGEACCOUNT}.file.core.windows.net/senzing" --recursive --log-level=DEBUG
+"$azcopypath/azcopy" cp "${Env:ARCHITECTURE}" "https://${Env:STORAGEACCOUNT}.file.core.windows.net/senzing" --recursive --log-level=DEBUG
 # ./azcopy cp "https://senzing.blob.core.windows.net/senzing/${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}" $localFolder --recursive
 
 #$packages = aws s3 ls ${Env:RPM_PATH}/ --no-sign-request | awk '{print $NF}' | grep "${Env:SENZING_VERSION}" | grep '.rpm'
