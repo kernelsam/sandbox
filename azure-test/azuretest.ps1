@@ -148,8 +148,8 @@ New-AzStorageDirectory -ShareName 'senzing' -Path "${Env:ARCHITECTURE}/openssl${
 #$Env:AZCOPY_AUTO_LOGIN_TYPE = "MSI"
 #$Env:AZCOPY_MSI_CLIENT_ID = ${Env:CLIENTID}
 #./azcopy login --identity --identity-client-id ${Env:CLIENTID}
-echo "[INFO] ./azcopy cp $localFolder/${Env:ARCHITECTURE} https://${Env:STORAGEACCOUNT}.file.core.windows.net/senzing --recursive"
-./azcopy cp "$localFolder/${Env:ARCHITECTURE}" "https://${Env:STORAGEACCOUNT}.file.core.windows.net/senzing" --recursive --log-level=DEBUG
+echo "[INFO] ./azcopy cp $containerName/${Env:ARCHITECTURE} https://${Env:STORAGEACCOUNT}.file.core.windows.net/senzing --recursive"
+./azcopy cp "$containerName/${Env:ARCHITECTURE}" "https://${Env:STORAGEACCOUNT}.file.core.windows.net/senzing" --recursive --log-level=DEBUG
 # ./azcopy cp "https://senzing.blob.core.windows.net/senzing/${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}" $localFolder --recursive
 
 #$packages = aws s3 ls ${Env:RPM_PATH}/ --no-sign-request | awk '{print $NF}' | grep "${Env:SENZING_VERSION}" | grep '.rpm'
