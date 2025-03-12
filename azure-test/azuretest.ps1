@@ -10,7 +10,6 @@ tar -xvzf azcopy_v10.tar.gz --strip-components=1
 $Env:AZCOPY_AUTO_LOGIN_TYPE = "MSI"
 $Env:AZCOPY_MSI_CLIENT_ID = ${Env:CLIENTID}
 ./azcopy login --identity --identity-client-id ${Env:CLIENTID}
-$azcopypath=$(pwd)
 
 #echo "[INFO] ./azcopy list https://senzing.blob.core.windows.net/senzing/${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}"
 #./azcopy list "https://senzing.blob.core.windows.net/senzing/${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}"
@@ -137,7 +136,6 @@ New-AzStorageDirectory -ShareName 'senzing' -Path "${Env:ARCHITECTURE}" -Context
 echo "[INFO] New-AzStorageDirectory -ShareName senzing -Path ${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION} -Context $storageAccount.Context"
 New-AzStorageDirectory -ShareName 'senzing' -Path "${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}" -Context $storageAccount.Context
 
-cd $localFolder
 #ls -tlc
 #apt update
 #apt install -y wget
@@ -150,8 +148,8 @@ cd $localFolder
 #$Env:AZCOPY_AUTO_LOGIN_TYPE = "MSI"
 #$Env:AZCOPY_MSI_CLIENT_ID = ${Env:CLIENTID}
 #./azcopy login --identity --identity-client-id ${Env:CLIENTID}
-echo "[INFO] $azcopypath/azcopy cp ${Env:ARCHITECTURE} https://${Env:STORAGEACCOUNT}.file.core.windows.net/senzing --recursive"
-"$azcopypath/azcopy" cp "${Env:ARCHITECTURE}" "https://${Env:STORAGEACCOUNT}.file.core.windows.net/senzing" --recursive --log-level=DEBUG
+echo "[INFO] ./azcopy cp $localFolder/${Env:ARCHITECTURE} https://${Env:STORAGEACCOUNT}.file.core.windows.net/senzing --recursive"
+./azcopy cp "$localFolder/${Env:ARCHITECTURE}" "https://${Env:STORAGEACCOUNT}.file.core.windows.net/senzing" --recursive --log-level=DEBUG
 # ./azcopy cp "https://senzing.blob.core.windows.net/senzing/${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}" $localFolder --recursive
 
 #$packages = aws s3 ls ${Env:RPM_PATH}/ --no-sign-request | awk '{print $NF}' | grep "${Env:SENZING_VERSION}" | grep '.rpm'
