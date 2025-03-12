@@ -4,12 +4,13 @@
 #$storageAccount = Get-AzStorageAccount -ResourceGroupName ${Env:RESOURCEGROUP} -Name ${Env:STORAGEACCOUNT}
 #$blob = Set-AzStorageBlobContent -File 'appsettings.json' -Container 'senzing' -Blob 'appsettings.json' -Context $StorageAccount.Context
 
-#Invoke-RestMethod -Uri https://aka.ms/downloadazcopy-v10-linux -OutFile azcopy_v10.tar.gz
-#tar -xvzf azcopy_v10.tar.gz --strip-components=1
-#./azcopy --version
-#$Env:AZCOPY_AUTO_LOGIN_TYPE = "MSI"
-#$Env:AZCOPY_MSI_CLIENT_ID = ${Env:CLIENTID}
-#./azcopy login --identity #--identity-client-id ${Env:CLIENTID}
+Invoke-RestMethod -Uri https://aka.ms/downloadazcopy-v10-linux -OutFile azcopy_v10.tar.gz
+tar -xvzf azcopy_v10.tar.gz --strip-components=1
+./azcopy --version
+$Env:AZCOPY_AUTO_LOGIN_TYPE = "MSI"
+$Env:AZCOPY_MSI_CLIENT_ID = ${Env:CLIENTID}
+./azcopy login --identity --identity-client-id ${Env:CLIENTID}
+$azcopypath=$(pwd)
 
 #echo "[INFO] ./azcopy list https://senzing.blob.core.windows.net/senzing/${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}"
 #./azcopy list "https://senzing.blob.core.windows.net/senzing/${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}"
@@ -137,20 +138,20 @@ echo "[INFO] New-AzStorageDirectory -ShareName senzing -Path ${Env:ARCHITECTURE}
 New-AzStorageDirectory -ShareName 'senzing' -Path "${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}" -Context $storageAccount.Context
 
 cd $localFolder
-ls -tlc
-apt update
-apt install -y wget
-wget -O azcopy_v10.tar.gz https://aka.ms/downloadazcopy-v10-linux
-ls -tlc
-echo "[INFO] tar -xvzf azcopy_v10.tar.gz --strip-components=1"
-tar -xvzf azcopy_v10.tar.gz --strip-components=1
-ls -tlc
-./azcopy --version
-$Env:AZCOPY_AUTO_LOGIN_TYPE = "MSI"
-$Env:AZCOPY_MSI_CLIENT_ID = ${Env:CLIENTID}
-./azcopy login --identity --identity-client-id ${Env:CLIENTID}
-echo "[INFO] ./azcopy cp ${Env:ARCHITECTURE} https://${Env:STORAGEACCOUNT}.file.core.windows.net/senzing --recursive"
-./azcopy cp "${Env:ARCHITECTURE}" "https://${Env:STORAGEACCOUNT}.file.core.windows.net/senzing" --recursive --log-level=DEBUG
+#ls -tlc
+#apt update
+#apt install -y wget
+#wget -O azcopy_v10.tar.gz https://aka.ms/downloadazcopy-v10-linux
+#ls -tlc
+#echo "[INFO] tar -xvzf azcopy_v10.tar.gz --strip-components=1"
+#tar -xvzf azcopy_v10.tar.gz --strip-components=1
+#ls -tlc
+#./azcopy --version
+#$Env:AZCOPY_AUTO_LOGIN_TYPE = "MSI"
+#$Env:AZCOPY_MSI_CLIENT_ID = ${Env:CLIENTID}
+#./azcopy login --identity --identity-client-id ${Env:CLIENTID}
+echo "[INFO] $azcopypath/azcopy cp ${Env:ARCHITECTURE} https://${Env:STORAGEACCOUNT}.file.core.windows.net/senzing --recursive"
+$azcopypath/azcopy cp "${Env:ARCHITECTURE}" "https://${Env:STORAGEACCOUNT}.file.core.windows.net/senzing" --recursive --log-level=DEBUG
 # ./azcopy cp "https://senzing.blob.core.windows.net/senzing/${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}" $localFolder --recursive
 
 #$packages = aws s3 ls ${Env:RPM_PATH}/ --no-sign-request | awk '{print $NF}' | grep "${Env:SENZING_VERSION}" | grep '.rpm'
