@@ -138,7 +138,9 @@ New-AzStorageDirectory -ShareName 'senzing' -Path "${Env:ARCHITECTURE}/openssl${
 
 cd $localFolder
 ls -tlc
-Invoke-RestMethod -Uri https://aka.ms/downloadazcopy-v10-linux -OutFile azcopy_v10.tar.gz
+apt update
+apt install -y wget
+wget -O azcopy_v10.tar.gz https://aka.ms/downloadazcopy-v10-linux
 ls -tlc
 echo "[INFO] tar -xvzf azcopy_v10.tar.gz --strip-components=1"
 tar -xvzf azcopy_v10.tar.gz --strip-components=1
