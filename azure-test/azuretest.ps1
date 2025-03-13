@@ -83,10 +83,12 @@ df -h
 
 $containerUrl = "https://senzing.blob.core.windows.net/senzing/${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}" 
 
-echo "[INFO] ./azcopy cp $containerUrl . --recursive --log-level=DEBUG"
-./azcopy cp "$containerUrl" . --recursive --log-level=DEBUG
+echo "[INFO] ./azcopy cp $containerUrl /tmp --recursive --log-level=DEBUG"
+./azcopy cp "$containerUrl" /tmp --recursive --log-level=DEBUG
 
 df -h
+
+ls -tlc /tmp
 
 # cat /root/.azcopy/*.log
 
