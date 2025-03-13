@@ -82,51 +82,54 @@ Write-Host "[INFO] deb platform path is: ${Env:DEB_PLATFORM_PATH}"
 
 $containerUrl = "https://senzing.blob.core.windows.net/senzing" 
 
+echo "[INFO] ./azcopy cp $containerUrl . --recursive --log-level=DEBUG"
+./azcopy cp "$containerUrl" . --recursive --log-level=DEBUG
+
 # Extract the container name from the URL
-$containerName = ($containerUrl -split "/")[-1]
+# $containerName = ($containerUrl -split "/")[-1]
 
 # Create a local folder
-$localFolder = ".\$containerName"
-if (-Not (Test-Path -Path $localFolder)) {
-    New-Item -ItemType Directory -Path $localFolder
-}
+#$localFolder = ".\$containerName"
+#if (-Not (Test-Path -Path $localFolder)) {
+#    New-Item -ItemType Directory -Path $localFolder
+#}
 
-$restApiUrl = "$($containerUrl)?restype=container&comp=list"
-Write-Host "[INFO] REST API URL: $restApiUrl"
+#$restApiUrl = "$($containerUrl)?restype=container&comp=list"
+#Write-Host "[INFO] REST API URL: $restApiUrl"
 
-try {
+#try {
     # Retrieve information of all files under the container
-    Invoke-RestMethod -Uri $restApiUrl -OutFile .\$containerName.xml
-    [xml]$xmlContent = Get-Content -Path .\$containerName.xml
-}
-catch {
-    Write-Error "[ERROR] Failed to fetch container information. Error: $_"
-    exit 1
-}
+#    Invoke-RestMethod -Uri $restApiUrl -OutFile .\$containerName.xml
+#    [xml]$xmlContent = Get-Content -Path .\$containerName.xml
+#}
+#catch {
+#    Write-Error "[ERROR] Failed to fetch container information. Error: $_"
+#    exit 1
+#}
 
-foreach ($blob in $xmlContent.EnumerationResults.Blobs.Blob) {
-    $blobUrl = $blob.Url
-    $blobName = $blob.Name
+#foreach ($blob in $xmlContent.EnumerationResults.Blobs.Blob) {
+#    $blobUrl = $blob.Url
+#    $blobName = $blob.Name
 
-    Write-Host "[INFO] Processing Blob: $blobName"
+#    Write-Host "[INFO] Processing Blob: $blobName"
 
-    $localFilePath = Join-Path $localFolder $blobName
+#    $localFilePath = Join-Path $localFolder $blobName
 
-    $localFileDir = Split-Path $localFilePath -Parent
-    if (-Not (Test-Path -Path $localFileDir)) {
-        New-Item -ItemType Directory -Path $localFileDir
-    }
+#    $localFileDir = Split-Path $localFilePath -Parent
+#    if (-Not (Test-Path -Path $localFileDir)) {
+#        New-Item -ItemType Directory -Path $localFileDir
+#    }
 
-    try {
-        Invoke-WebRequest -Uri $blobUrl -OutFile $localFilePath
-        Write-Host "[INFO] Downloaded: $blobUrl to $localFilePath"
-    }
-    catch {
-        Write-Error "[ERROR] Failed to download $blobUrl. Error: $_"
-    }
-}
+#    try {
+#        Invoke-WebRequest -Uri $blobUrl -OutFile $localFilePath
+#        Write-Host "[INFO] Downloaded: $blobUrl to $localFilePath"
+#    }
+#    catch {
+#        Write-Error "[ERROR] Failed to download $blobUrl. Error: $_"
+#    }
+#}
 
-Write-Host "[INFO] All files have been downloaded to the $localFolder folder."
+#Write-Host "[INFO] All files have been downloaded to the $localFolder folder."
 
 
 
