@@ -80,12 +80,12 @@ Write-Host "[INFO] deb platform path is: ${Env:DEB_PLATFORM_PATH}"
 #echo "[INFO] Senzing version is: ${Env:SENZING_VERSION}"
 
 
-$containerUrl = "https://senzing.blob.core.windows.net/senzing" 
+$containerUrl = "https://senzing.blob.core.windows.net/senzing/${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}" 
 
 echo "[INFO] ./azcopy cp $containerUrl . --recursive --log-level=DEBUG"
 ./azcopy cp "$containerUrl" . --recursive --log-level=DEBUG
 
-cat /root/.azcopy/*.log
+# cat /root/.azcopy/*.log
 
 # Extract the container name from the URL
 # $containerName = ($containerUrl -split "/")[-1]
