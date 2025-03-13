@@ -85,6 +85,8 @@ $containerUrl = "https://senzing.blob.core.windows.net/senzing"
 echo "[INFO] ./azcopy cp $containerUrl . --recursive --log-level=DEBUG"
 ./azcopy cp "$containerUrl" . --recursive --log-level=DEBUG
 
+cat /root/.azcopy/*.log
+
 # Extract the container name from the URL
 # $containerName = ($containerUrl -split "/")[-1]
 
