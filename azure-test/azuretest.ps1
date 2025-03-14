@@ -7,8 +7,8 @@
 Invoke-RestMethod -Uri https://aka.ms/downloadazcopy-v10-linux -OutFile azcopy_v10.tar.gz
 tar -xvzf azcopy_v10.tar.gz --strip-components=1
 ./azcopy --version
-export AZCOPY_AUTO_LOGIN_TYPE="MSI"
-export AZCOPY_MSI_CLIENT_ID=${Env:CLIENTID}
+$AZCOPY_AUTO_LOGIN_TYPE="MSI"
+$AZCOPY_MSI_CLIENT_ID=${Env:CLIENTID}
 #export AZCOPY_MSI_OBJECT_ID=<object-id>
 #export AZCOPY_MSI_RESOURCE_STRING=<resource-id>
 ./azcopy login --identity --identity-client-id ${Env:CLIENTID}
