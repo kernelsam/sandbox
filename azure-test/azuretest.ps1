@@ -7,8 +7,10 @@
 Invoke-RestMethod -Uri https://aka.ms/downloadazcopy-v10-linux -OutFile azcopy_v10.tar.gz
 tar -xvzf azcopy_v10.tar.gz --strip-components=1
 ./azcopy --version
-$Env:AZCOPY_AUTO_LOGIN_TYPE = "MSI"
-$Env:AZCOPY_MSI_CLIENT_ID = ${Env:CLIENTID}
+exxport AZCOPY_AUTO_LOGIN_TYPE="MSI"
+export AZCOPY_MSI_CLIENT_ID=${Env:CLIENTID}
+#export AZCOPY_MSI_OBJECT_ID=<object-id>
+#export AZCOPY_MSI_RESOURCE_STRING=<resource-id>
 ./azcopy login --identity --identity-client-id ${Env:CLIENTID}
 
 #echo "[INFO] ./azcopy list https://senzing.blob.core.windows.net/senzing/${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}"
