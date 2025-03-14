@@ -11,7 +11,7 @@ $AZCOPY_AUTO_LOGIN_TYPE="MSI"
 $AZCOPY_MSI_CLIENT_ID=${Env:CLIENTID}
 #export AZCOPY_MSI_OBJECT_ID=<object-id>
 #export AZCOPY_MSI_RESOURCE_STRING=<resource-id>
-./azcopy login --identity --identity-client-id ${Env:CLIENTID}
+#./azcopy login --identity --identity-client-id ${Env:CLIENTID}
 
 #echo "[INFO] ./azcopy list https://senzing.blob.core.windows.net/senzing/${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}"
 #./azcopy list "https://senzing.blob.core.windows.net/senzing/${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}"
@@ -157,10 +157,10 @@ New-AzStorageDirectory -ShareName 'senzing' -Path "${Env:ARCHITECTURE}/openssl${
 #tar -xvzf azcopy_v10.tar.gz --strip-components=1
 #ls -tlc
 #./azcopy --version
-#$Env:AZCOPY_AUTO_LOGIN_TYPE = "MSI"
-#$Env:AZCOPY_MSI_CLIENT_ID = ${Env:CLIENTID}
+$Env:AZCOPY_AUTO_LOGIN_TYPE = "MSI"
+$Env:AZCOPY_MSI_CLIENT_ID = ${Env:CLIENTID}
 #./azcopy login --identity --identity-client-id ${Env:CLIENTID}
-./azcopy login --identity --identity-client-id ${Env:CLIENTID}
+#./azcopy login --identity --identity-client-id ${Env:CLIENTID}
 echo "[INFO] ./azcopy cp /tmp/openssl${Env:OPENSSLVERSION} https://${Env:STORAGEACCOUNT}.file.core.windows.net/senzing/${Env:ARCHITECTURE} --recursive"
 ./azcopy cp "/tmp/openssl${Env:OPENSSLVERSION}" "https://${Env:STORAGEACCOUNT}.file.core.windows.net/senzing/${Env:ARCHITECTURE}" --recursive --log-level=DEBUG
 # ./azcopy cp "https://senzing.blob.core.windows.net/senzing/${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}" $localFolder --recursive
