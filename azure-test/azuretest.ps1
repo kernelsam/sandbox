@@ -177,8 +177,8 @@ New-AzStorageDirectory -ShareName 'senzing' -Path "${Env:ARCHITECTURE}/openssl${
 #$Env:AZCOPY_MSI_CLIENT_ID = ${Env:CLIENTID}
 #./azcopy login --identity --identity-client-id ${Env:CLIENTID}
 ls -tlc "/tmp/openssl${Env:OPENSSLVERSION}"
-echo "[INFO] azcopy copy /tmp/openssl${Env:OPENSSLVERSION} https://${Env:STORAGEACCOUNT}.blob.core.windows.net/senzing/${Env:ARCHITECTURE} --recursive=true --log-level=DEBUG"
-./azcopy copy "/tmp/openssl${Env:OPENSSLVERSION}" "https://${Env:STORAGEACCOUNT}.blob.core.windows.net/senzing/${Env:ARCHITECTURE}" --recursive=true --log-level=DEBUG
+#echo "[INFO] azcopy copy /tmp/openssl${Env:OPENSSLVERSION} https://${Env:STORAGEACCOUNT}.blob.core.windows.net/senzing/${Env:ARCHITECTURE} --recursive=true --log-level=DEBUG"
+#./azcopy copy "/tmp/openssl${Env:OPENSSLVERSION}" "https://${Env:STORAGEACCOUNT}.blob.core.windows.net/senzing/${Env:ARCHITECTURE}" --recursive=true --log-level=DEBUG
 
 echo "[INFO] ./azcopy cp /tmp/openssl${Env:OPENSSLVERSION} https://${Env:STORAGEACCOUNT}.file.core.windows.net/senzing/${Env:ARCHITECTURE} --recursive"
 ./azcopy cp "/tmp/openssl${Env:OPENSSLVERSION}" "https://${Env:STORAGEACCOUNT}.file.core.windows.net/senzing/${Env:ARCHITECTURE}" --recursive --log-level=DEBUG
