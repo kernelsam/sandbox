@@ -181,10 +181,9 @@ New-AzStorageDirectory -ShareName 'senzing' -Path "${Env:ARCHITECTURE}/openssl${
 ls -tlc "/tmp/openssl${Env:OPENSSLVERSION}"
 echo "[INFO] azcopy copy /tmp/openssl${Env:OPENSSLVERSION} https://${Env:STORAGEACCOUNT}.blob.core.windows.net/senzing/${Env:ARCHITECTURE} --recursive=true --log-level=DEBUG"
 azcopy copy "/tmp/openssl${Env:OPENSSLVERSION}" "https://${Env:STORAGEACCOUNT}.blob.core.windows.net/senzing/${Env:ARCHITECTURE}" --recursive=true --log-level=DEBUG
-#echo "[INFO] ./azcopy cp /tmp/openssl${Env:OPENSSLVERSION} https://${Env:STORAGEACCOUNT}.file.core.windows.net/senzing/${Env:ARCHITECTURE} --recursive"
-# ./azcopy cp "/tmp/openssl${Env:OPENSSLVERSION}" "https://${Env:STORAGEACCOUNT}.file.core.windows.net/senzing/${Env:ARCHITECTURE}" --recursive --log-level=DEBUG
-#echo "[INFO] ./azcopy cp /tmp/openssl${Env:OPENSSLVERSION} https://${Env:STORAGEACCOUNT}.file.core.windows.net/senzing/${Env:ARCHITECTURE} --recursive"
-# ./azcopy cp "/tmp/openssl${Env:OPENSSLVERSION}" "https://${Env:STORAGEACCOUNT}.file.core.windows.net/senzing/${Env:ARCHITECTURE}" --recursive --log-level=DEBUG
+
+echo "[INFO] ./azcopy cp /tmp/openssl${Env:OPENSSLVERSION} https://${Env:STORAGEACCOUNT}.file.core.windows.net/senzing/${Env:ARCHITECTURE} --recursive"
+./azcopy cp "/tmp/openssl${Env:OPENSSLVERSION}" "https://${Env:STORAGEACCOUNT}.file.core.windows.net/senzing/${Env:ARCHITECTURE}" --recursive --log-level=DEBUG
 
 #$packages = aws s3 ls ${Env:RPM_PATH}/ --no-sign-request | awk '{print $NF}' | grep "${Env:SENZING_VERSION}" | grep '.rpm'
 #for ( package in ${packages} ) {
