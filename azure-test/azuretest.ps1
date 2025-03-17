@@ -14,6 +14,9 @@ $AZCOPY_MSI_CLIENT_ID=${Env:CLIENTID}
 echo "principal id: ${Env:PRINCIPALID}"
 echo "tenant id: ${Env:TENANTID}"
 $AZCOPY_REQUEST_TRY_TIMEOUT=15
+
+echo "get metadata"
+curl -s 'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https://management.azure.com/' --header 'Metadata: true' | jq -r .access_token | jq -R 'split(\".\") | .[1] | @base64d | fromjson | {oid: .oid, appid: .appid,tid: .tid}'
 #export AZCOPY_MSI_OBJECT_ID=<object-id>
 #export AZCOPY_MSI_RESOURCE_STRING=<resource-id>
 #./azcopy login --identity --identity-client-id ${Env:CLIENTID}
@@ -89,6 +92,11 @@ Write-Host "[INFO] deb platform path is: ${Env:DEB_PLATFORM_PATH}"
 df -h
 
 $containerUrl = "https://senzing.blob.core.windows.net/senzing/${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}" 
+
+$response=$(curl 'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https%3A%2F%2Fmanagement.azure.com%2F' -H Metadata:true -s)
+print $response
+$access_token=$(echo $response | python -c 'import sys, json; print (json.load(sys.stdin)["access_token"])')
+echo The managed identities for Azure resources access token is $access_token
 
 echo "[INFO] ./azcopy cp $containerUrl /tmp --recursive --log-level=DEBUG"
 ./azcopy cp "$containerUrl" /tmp --recursive --log-level=DEBUG
