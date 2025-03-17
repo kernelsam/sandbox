@@ -175,13 +175,16 @@ New-AzStorageDirectory -ShareName 'senzing' -Path "${Env:ARCHITECTURE}/openssl${
 #tar -xvzf azcopy_v10.tar.gz --strip-components=1
 #ls -tlc
 #./azcopy --version
-$Env:AZCOPY_AUTO_LOGIN_TYPE = "MSI"
-$Env:AZCOPY_MSI_CLIENT_ID = ${Env:CLIENTID}
+#$Env:AZCOPY_AUTO_LOGIN_TYPE = "MSI"
+#$Env:AZCOPY_MSI_CLIENT_ID = ${Env:CLIENTID}
 #./azcopy login --identity --identity-client-id ${Env:CLIENTID}
-#./azcopy login --identity --identity-client-id ${Env:CLIENTID}
-echo "[INFO] ./azcopy cp /tmp/openssl${Env:OPENSSLVERSION} https://${Env:STORAGEACCOUNT}.file.core.windows.net/senzing/${Env:ARCHITECTURE} --recursive"
-./azcopy cp "/tmp/openssl${Env:OPENSSLVERSION}" "https://${Env:STORAGEACCOUNT}.file.core.windows.net/senzing/${Env:ARCHITECTURE}" --recursive --log-level=DEBUG
-# ./azcopy cp "https://senzing.blob.core.windows.net/senzing/${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}" $localFolder --recursive
+ls -tlc "/tmp/openssl${Env:OPENSSLVERSION}"
+echo "[INFO] azcopy copy /tmp/openssl${Env:OPENSSLVERSION} https://${Env:STORAGEACCOUNT}.blob.core.windows.net/senzing/${Env:ARCHITECTURE} --recursive=true --log-level=DEBUG"
+azcopy copy "/tmp/openssl${Env:OPENSSLVERSION}" "https://${Env:STORAGEACCOUNT}.blob.core.windows.net/senzing/${Env:ARCHITECTURE}" --recursive=true --log-level=DEBUG
+#echo "[INFO] ./azcopy cp /tmp/openssl${Env:OPENSSLVERSION} https://${Env:STORAGEACCOUNT}.file.core.windows.net/senzing/${Env:ARCHITECTURE} --recursive"
+# ./azcopy cp "/tmp/openssl${Env:OPENSSLVERSION}" "https://${Env:STORAGEACCOUNT}.file.core.windows.net/senzing/${Env:ARCHITECTURE}" --recursive --log-level=DEBUG
+#echo "[INFO] ./azcopy cp /tmp/openssl${Env:OPENSSLVERSION} https://${Env:STORAGEACCOUNT}.file.core.windows.net/senzing/${Env:ARCHITECTURE} --recursive"
+# ./azcopy cp "/tmp/openssl${Env:OPENSSLVERSION}" "https://${Env:STORAGEACCOUNT}.file.core.windows.net/senzing/${Env:ARCHITECTURE}" --recursive --log-level=DEBUG
 
 #$packages = aws s3 ls ${Env:RPM_PATH}/ --no-sign-request | awk '{print $NF}' | grep "${Env:SENZING_VERSION}" | grep '.rpm'
 #for ( package in ${packages} ) {
