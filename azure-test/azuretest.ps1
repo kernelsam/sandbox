@@ -9,6 +9,8 @@ tar -xvzf azcopy_v10.tar.gz --strip-components=1
 ./azcopy --version
 $AZCOPY_AUTO_LOGIN_TYPE="MSI"
 $AZCOPY_MSI_CLIENT_ID=${Env:CLIENTID}
+$AZCOPY_MSI_OBJECT_ID=${Env:OBJECTID}
+$AZCOPY_MSI_RESOURCE_STRING=${Env:RESOURCEID}
 $AZCOPY_REQUEST_TRY_TIMEOUT=15
 #export AZCOPY_MSI_OBJECT_ID=<object-id>
 #export AZCOPY_MSI_RESOURCE_STRING=<resource-id>
