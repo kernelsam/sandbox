@@ -15,8 +15,8 @@ echo "principal id: ${Env:PRINCIPALID}"
 echo "tenant id: ${Env:TENANTID}"
 $AZCOPY_REQUEST_TRY_TIMEOUT=15
 
-echo "get metadata"
-curl -s 'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https://management.azure.com/' --header 'Metadata: true' | jq -r .access_token | jq -R 'split(\".\") | .[1] | @base64d | fromjson | {oid: .oid, appid: .appid,tid: .tid}'
+#echo "get metadata"
+#curl -s 'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https://management.azure.com/' --header 'Metadata: true' | jq -r .access_token | jq -R 'split(\".\") | .[1] | @base64d | fromjson | {oid: .oid, appid: .appid,tid: .tid}'
 #export AZCOPY_MSI_OBJECT_ID=<object-id>
 #export AZCOPY_MSI_RESOURCE_STRING=<resource-id>
 #./azcopy login --identity --identity-client-id ${Env:CLIENTID}
