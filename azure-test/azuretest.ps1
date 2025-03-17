@@ -173,8 +173,8 @@ New-AzStorageDirectory -ShareName 'senzing' -Path "${Env:ARCHITECTURE}/openssl${
 #tar -xvzf azcopy_v10.tar.gz --strip-components=1
 #ls -tlc
 #./azcopy --version
-#$Env:AZCOPY_AUTO_LOGIN_TYPE = "MSI"
-#$Env:AZCOPY_MSI_CLIENT_ID = ${Env:CLIENTID}
+$Env:AZCOPY_AUTO_LOGIN_TYPE = "MSI"
+$Env:AZCOPY_MSI_CLIENT_ID = ${Env:CLIENTID}
 #./azcopy login --identity --identity-client-id ${Env:CLIENTID}
 ls -tlc "/tmp/openssl${Env:OPENSSLVERSION}"
 #echo "[INFO] azcopy copy /tmp/openssl${Env:OPENSSLVERSION} https://${Env:STORAGEACCOUNT}.blob.core.windows.net/senzing/${Env:ARCHITECTURE} --recursive=true --log-level=DEBUG"
