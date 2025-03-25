@@ -25,7 +25,21 @@ else {
     exit $exit_status
   }
 }
+
 echo "[INFO] Senzing version is: ${Env:SENZING_VERSION}"
+$dataversion = ""
+$architectures = ""
+$opensslversions = ""
+if ( [System.Version]"3.10.0" -gt [System.Version]"${Env:SENZING_VERSION}" ) {
+  $architectures = "x86"
+  $dataversion = "v4"
+  $opensslversions = "openssl1"
+} 
+else {
+  $architectures = "x86", "arm"
+  $dataversion = "v5"
+  $opensslversions = "openssl1", "openssl3"
+}
 
 $packages = ./azcopy list $containerUrl | awk '{print $1}' | rev | cut -c 2- | rev | grep "${Env:SENZING_VERSION}"
 foreach ($package in $packages) {
@@ -33,9 +47,13 @@ foreach ($package in $packages) {
   ./azcopy cp "$containerUrl/$package" "/tmp/$package" --recursive --log-level=DEBUG
 }
 
+$packages = ./azcopy list $containerUrl | awk '{print $1}' | rev | cut -c 2- | rev | grep "$dataversion"
+foreach ($package in $packages) {
+  echo "[INFO] ./azcopy cp $containerUrl/$package /tmp/$package --recursive --log-level=DEBUG"
+  ./azcopy cp "$containerUrl/$package" "/tmp/$package" --recursive --log-level=DEBUG
+}
+
 $StorageAccount = Get-AzStorageAccount -ResourceGroupName ${Env:RESOURCEGROUP} -Name ${Env:STORAGEACCOUNT}
-$architectures = "x86", "arm"
-$opensslversions = "openssl1", "openssl3"
 foreach ($arch in $architectures) { 
   echo "[INFO] New-AzStorageDirectory -ShareName senzing -Path $arch -Context $storageAccount.Context"
   New-AzStorageDirectory -ShareName 'senzing' -Path "$arch" -Context $storageAccount.Context
