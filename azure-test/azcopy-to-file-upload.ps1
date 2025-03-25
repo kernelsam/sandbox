@@ -10,13 +10,11 @@ echo "tenant id: ${Env:TENANTID}"
 $AZCOPY_REQUEST_TRY_TIMEOUT=5
           
 Write-Host "[INFO] architecture is: ${Env:ARCHITECTURE}"
-Write-Host "[INFO] rpm platform path is: ${Env:RPM_PLATFORM_PATH}"
-Write-Host "[INFO] deb platform path is: ${Env:DEB_PLATFORM_PATH}"
 
 $containerUrl = "https://senzing.blob.core.windows.net/senzing/${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}" 
 
-echo "[INFO] ./azcopy cp $containerUrl /tmp/${Env:ARCHITECTURE} --recursive --log-level=DEBUG"
-./azcopy cp "$containerUrl" /tmp/${Env:ARCHITECTURE} --recursive --log-level=DEBUG
+echo "[INFO] ./azcopy cp $containerUrl /tmp/${Env:ARCHITECTURE}.ToLower() --recursive --log-level=DEBUG"
+./azcopy cp "$containerUrl" /tmp/${Env:ARCHITECTURE}.ToLower() --recursive --log-level=DEBUG
 
 $StorageAccount = Get-AzStorageAccount -ResourceGroupName ${Env:RESOURCEGROUP} -Name ${Env:STORAGEACCOUNT}
 echo "[INFO] New-AzStorageDirectory -ShareName senzing -Path ${Env:ARCHITECTURE} -Context $storageAccount.Context"
