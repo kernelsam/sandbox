@@ -46,7 +46,7 @@ foreach ($arch in $architectures) {
     cd "/tmp/$arch/$opensslversion"
     $CurrentFolder = (Get-Item .).FullName
     $Container = Get-AzStorageShare -Name 'senzing' -Context $StorageAccount.Context
-    Get-ChildItem -Recurse -contains ${Env:SENZING_VERSION} | Where-Object { $_.GetType().Name -eq "FileInfo"} | ForEach-Object {
+    Get-ChildItem -Recurse | Where-Object { $_.GetType().Name -eq "FileInfo"} | ForEach-Object {
       $path=$_.FullName.Substring($Currentfolder.Length+1).Replace("\","/")
       Write-Host "[INFO] Set-AzStorageFileContent -ShareName 'senzing' -Source $_ -Path $arch/$opensslversion/$path -Force -Context"
       Set-AzStorageFileContent -ShareName 'senzing' -Source "$_" -Path "$arch/$opensslversion/$path" -Force -Context $storageAccount.Context
