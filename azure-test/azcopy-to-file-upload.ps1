@@ -7,7 +7,7 @@ $AZCOPY_AUTO_LOGIN_TYPE="MSI"
 $AZCOPY_MSI_CLIENT_ID=${Env:CLIENTID}
 echo "principal id: ${Env:PRINCIPALID}"
 echo "tenant id: ${Env:TENANTID}"
-$AZCOPY_REQUEST_TRY_TIMEOUT=1
+$AZCOPY_REQUEST_TRY_TIMEOUT=5
           
 Write-Host "[INFO] architecture is: ${Env:ARCHITECTURE}"
 Write-Host "[INFO] rpm platform path is: ${Env:RPM_PLATFORM_PATH}"
