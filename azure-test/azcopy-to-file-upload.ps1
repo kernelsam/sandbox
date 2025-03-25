@@ -8,27 +8,29 @@ $AZCOPY_MSI_CLIENT_ID=${Env:CLIENTID}
 echo "principal id: ${Env:PRINCIPALID}"
 echo "tenant id: ${Env:TENANTID}"
 $AZCOPY_REQUEST_TRY_TIMEOUT=5
+
+$arch=$(${Env:ARCHITECTURE}.ToLower())
           
-Write-Host "[INFO] architecture is: ${Env:ARCHITECTURE}"
+Write-Host "[INFO] architecture is: $arch"
 
-$containerUrl = "https://senzing.blob.core.windows.net/senzing/${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}" 
+$containerUrl = "https://senzing.blob.core.windows.net/senzing/$arch/openssl${Env:OPENSSLVERSION}" 
 
-echo "[INFO] ./azcopy cp $containerUrl /tmp/${Env:ARCHITECTURE}.ToLower() --recursive --log-level=DEBUG"
-./azcopy cp "$containerUrl" /tmp/${Env:ARCHITECTURE}.ToLower() --recursive --log-level=DEBUG
+echo "[INFO] ./azcopy cp $containerUrl /tmp/$arch --recursive --log-level=DEBUG"
+./azcopy cp "$containerUrl" /tmp/$arch --recursive --log-level=DEBUG
 
 $StorageAccount = Get-AzStorageAccount -ResourceGroupName ${Env:RESOURCEGROUP} -Name ${Env:STORAGEACCOUNT}
-echo "[INFO] New-AzStorageDirectory -ShareName senzing -Path ${Env:ARCHITECTURE} -Context $storageAccount.Context"
-New-AzStorageDirectory -ShareName 'senzing' -Path "${Env:ARCHITECTURE}" -Context $storageAccount.Context
-echo "[INFO] New-AzStorageDirectory -ShareName senzing -Path ${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION} -Context $storageAccount.Context"
-New-AzStorageDirectory -ShareName 'senzing' -Path "${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}" -Context $storageAccount.Context
+echo "[INFO] New-AzStorageDirectory -ShareName senzing -Path $arch -Context $storageAccount.Context"
+New-AzStorageDirectory -ShareName 'senzing' -Path "$arch" -Context $storageAccount.Context
+echo "[INFO] New-AzStorageDirectory -ShareName senzing -Path $arch/openssl${Env:OPENSSLVERSION} -Context $storageAccount.Context"
+New-AzStorageDirectory -ShareName 'senzing' -Path "$arch/openssl${Env:OPENSSLVERSION}" -Context $storageAccount.Context
 
-ls -tlc /tmp/${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}
-cd /tmp/${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}
+ls -tlc /tmp/$arch/openssl${Env:OPENSSLVERSION}
+cd /tmp/$arch/openssl${Env:OPENSSLVERSION}
 $CurrentFolder = (Get-Item .).FullName
 $Container = Get-AzStorageShare -Name 'senzing' -Context $StorageAccount.Context
 
 Get-ChildItem -Recurse | Where-Object { $_.GetType().Name -eq "FileInfo"} | ForEach-Object {
   $path=$_.FullName.Substring($Currentfolder.Length+1).Replace("\","/")
-  Write-Host "[INFO] Set-AzStorageFileContent -ShareName 'senzing' -Source $_ -Path ${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}/$path -Force -Context"
-  Set-AzStorageFileContent -ShareName 'senzing' -Source "$_" -Path "${Env:ARCHITECTURE}/openssl${Env:OPENSSLVERSION}/$path" -Force -Context $storageAccount.Context
+  Write-Host "[INFO] Set-AzStorageFileContent -ShareName 'senzing' -Source $_ -Path $arch/openssl${Env:OPENSSLVERSION}/$path -Force -Context"
+  Set-AzStorageFileContent -ShareName 'senzing' -Source "$_" -Path "$arch/openssl${Env:OPENSSLVERSION}/$path" -Force -Context $storageAccount.Context
 }
