@@ -35,7 +35,7 @@ foreach ($package in $packages) {
 
 $StorageAccount = Get-AzStorageAccount -ResourceGroupName ${Env:RESOURCEGROUP} -Name ${Env:STORAGEACCOUNT}
 $architectures = "x86", "arm"
-opensslversions = "openssl1", "openssl3"
+$opensslversions = "openssl1", "openssl3"
 foreach ($arch in $architectures) { 
   echo "[INFO] New-AzStorageDirectory -ShareName senzing -Path $arch -Context $storageAccount.Context"
   New-AzStorageDirectory -ShareName 'senzing' -Path "$arch" -Context $storageAccount.Context
