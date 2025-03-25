@@ -11,9 +11,7 @@ $containerUrl = "https://senzing.blob.core.windows.net/senzing"
 
 if ( ${Env:SENZING_VERSION} -eq 'latest' ) {
   echo "[INFO] Find latest senzing version"
-  ./azcopy list $containerUrl
   ./azcopy list $containerUrl | grep "runtime" | awk '{print $1}' | cut -d/ -f3 | rev | cut -c 2- | rev >> packages
-  cat packages
   ${Env:SENZING_VERSION}= cat packages | grep rpm | cut -d "-" -f 3 | Sort-Object { $_ -as [version] } | tail -n1
   rm packages
 }
@@ -29,10 +27,10 @@ else {
 }
 echo "[INFO] Senzing version is: ${Env:SENZING_VERSION}"
 
-$packages = azcopy list $containerUrl | awk '{print $1}' | rev | cut -c 2- | rev | grep "${Env:SENZING_VERSION}"
+$packages = ./azcopy list $containerUrl | awk '{print $1}' | rev | cut -c 2- | rev | grep "${Env:SENZING_VERSION}"
 foreach ($package in $packages) {
   echo "[INFO] ./azcopy cp $containerUrl/$package /tmp/$package --recursive --log-level=DEBUG"
-  ~/Downloads/azcopy_darwin_amd64_10.28.0/azcopy cp "$containerUrl/$package" "/tmp/$package" --recursive --log-level=DEBUG
+  ./azcopy cp "$containerUrl/$package" "/tmp/$package" --recursive --log-level=DEBUG
 }
 
 $StorageAccount = Get-AzStorageAccount -ResourceGroupName ${Env:RESOURCEGROUP} -Name ${Env:STORAGEACCOUNT}
