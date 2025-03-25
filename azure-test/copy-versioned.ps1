@@ -5,24 +5,21 @@ tar -xvzf azcopy_v10.tar.gz --strip-components=1
 ./azcopy --version
 $AZCOPY_AUTO_LOGIN_TYPE="MSI"
 $AZCOPY_MSI_CLIENT_ID=${Env:CLIENTID}
-$AZCOPY_REQUEST_TRY_TIMEOUT=10
+#$AZCOPY_REQUEST_TRY_TIMEOUT=10
           
-$containerUrl = "https://senzing.blob.core.windows.net/senzing" 
-
-echo "[INFO] ./azcopy cp $containerUrl /tmp --recursive --log-level=DEBUG"
-./azcopy cp "$containerUrl" /tmp --recursive --log-level=DEBUG
+$containerUrl = "https://senzing.blob.core.windows.net/senzing"
 
 if ( ${Env:SENZING_VERSION} -eq 'latest' ) {
   echo "[INFO] Find latest senzing version"
-  ls "/tmp/x86/openssl3"
-  ls "/tmp/x86/openssl3" | grep "runtime" | awk '{print $NF}' >> packages
+  ./azcopy list $containerUrl
+  ./azcopy list $containerUrl | grep "runtime" | awk '{print $1}' | cut -d/ -f3 | rev | cut -c 2- | rev >> packages
   cat packages
-  ${Env:SENZING_VERSION}= cat packages | sort -r | head -n 1 | cut -d "-" -f 3
+  ${Env:SENZING_VERSION}= cat packages | grep rpm | cut -d "-" -f 3 | Sort-Object { $_ -as [version] } | tail -n1
   rm packages
 }
 else {
   "[INFO] Verify supplied senzing version exists"
-  ls "/tmp/x86/openssl3" | awk '{print $NF}' | grep "${Env:SENZING_VERSION}"
+  ./azcopy list $containerUrl | awk '{print $1}' | cut -d/ -f3 | rev | cut -c 2- | rev | grep "${Env:SENZING_VERSION}"
   exit_status=$?
   if ( $exit_status -ne 0 ) {
     echo "[ERROR] Failed to find Senzing version: ${Env:SENZING_VERSION}."
@@ -32,6 +29,11 @@ else {
 }
 echo "[INFO] Senzing version is: ${Env:SENZING_VERSION}"
 
+$packages = azcopy list $containerUrl | awk '{print $1}' | rev | cut -c 2- | rev | grep "${Env:SENZING_VERSION}"
+foreach ($package in $packages) {
+  echo "[INFO] ./azcopy cp $containerUrl/$package /tmp/$package --recursive --log-level=DEBUG"
+  ~/Downloads/azcopy_darwin_amd64_10.28.0/azcopy cp "$containerUrl/$package" "/tmp/$package" --recursive --log-level=DEBUG
+}
 
 $StorageAccount = Get-AzStorageAccount -ResourceGroupName ${Env:RESOURCEGROUP} -Name ${Env:STORAGEACCOUNT}
 $architectures = "x86", "arm"
