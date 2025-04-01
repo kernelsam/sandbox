@@ -18,7 +18,8 @@ if ( ${Env:SENZING_VERSION} -eq 'latest' ) {
 else {
   "[INFO] Verify supplied senzing version exists"
   ./azcopy list $containerUrl | awk '{print $1}' | cut -d/ -f3 | rev | cut -c 2- | rev | grep "${Env:SENZING_VERSION}"
-  $exit_status=$?
+  $exit_status=$LASTEXITCODE
+  echo "[INFO] exit status is: $LASTEXITCODE"
   if ( $exit_status -ne 0 ) {
     echo "[ERROR] Failed to find Senzing version: ${Env:SENZING_VERSION}."
     echo "[ERROR] Please refer to https://senzing.com/releases/ for supported versions."
