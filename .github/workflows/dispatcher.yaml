@@ -1,0 +1,19 @@
+name: Dispatcher
+on:
+  push:
+
+jobs:
+  dispatch:
+    name: Dispatch
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        repo: ["kernelsam/dep-test"]
+
+    steps:
+      - name: Dispatch to workflows
+        run: |
+          curl -H "Accept: application/vnd.github.everest-preview+json" \
+          -H "Authorization: token ${{ secrets.DISPATCH_TOKEN }}" \
+          --request POST \
+          --data '{"event_type": "some_event", "client_payload": { "test": "test value", "test2": "test value 2" }}' https://api.github.com/repos/${{ matrix.repo }}/dispatches
