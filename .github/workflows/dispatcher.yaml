@@ -18,3 +18,4 @@ jobs:
           -H "Authorization: token ${{ secrets.DISPATCH_TOKEN }}" \
           --request POST \
           --data '{"event_type": "some_event", "client_payload": { "test": "test value", "test2": "test value 2" }}' https://api.github.com/repos/${{ matrix.repo }}/dispatches
+          exit $?
