@@ -12,5 +12,5 @@ jobs:
     steps:
       - name: dep-list
         run: |
-          ldd --version
-
+          echo ${{ secrets.TEST }} >> test
+          cat test
